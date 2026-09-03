@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en" class="dark bg-[#050505] text-white">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function() {
+        function isExtensionError(val) {
+          if (!val) return false;
+          var text = '';
+          try {
+            if (typeof val === 'string') {
+              text = val;
+            } else if (val instanceof Error) {
+              text = val.message + ' ' + (val.stack || '');
+            } else if (typeof val === 'object') {
+              text = (val.message || '') + ' ' + (val.reason || '') + ' ' + (val.error ? val.error.message || '' : '');
+            } else {
+              text = String(val);
+            }
+          } catch (e) {
+            text = String(val);
+          }
+          var lower = text.toLowerCase();
+          return (
+            lower.indexOf('metamask') !== -1 ||
+            lower.indexOf('failed to connect to metamask') !== -1 ||
+            lower.indexOf('ethereum') !== -1 ||
+            lower.indexOf('web3') !== -1 ||
+            lower.indexOf('evm') !== -1 ||
+            lower.indexOf('wallet') !== -1 ||
+            lower.indexOf('chrome-extension://') !== -1 ||
+            lower.indexOf('moz-extension://') !== -1
+          );
+        }
+
+        // Intercept console.error and console.warn
+        var origConsoleError = console.error;
+        console.error = function() {
+          for (var i = 0; i < arguments.length; i++) {
+            if (isExtensionError(arguments[i])) {
+              return;
+            }
+          }
+          return origConsoleError.apply(console, arguments);
+        };
+
+        var origConsoleWarn = console.warn;
+        console.warn = function() {
+          for (var i = 0; i < arguments.length; i++) {
+            if (isExtensionError(arguments[i])) {
+              return;
+            }
+          }
+          return origConsoleWarn.apply(console, arguments);
+        };
+
+        // Intercept window.onerror
+        var origOnError = window.onerror;
+        window.onerror = function(message, source, lineno, colno, error) {
+          if (isExtensionError(message) || isExtensionError(source) || isExtensionError(error)) {
+            return true;
+          }
+          if (typeof origOnError === 'function') {
+            return origOnError.apply(this, arguments);
+          }
+          return false;
+        };
+
+        // Intercept capture-phase window error
+        window.addEventListener(
+          'error',
+          function(event) {
+            if (isExtensionError(event.message) || isExtensionError(event.error) || isExtensionError(event.filename)) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              return true;
+            }
+          },
+          true
+        );
+
+        // Intercept capture-phase window unhandledrejection
+        window.addEventListener(
+          'unhandledrejection',
+          function(event) {
+            if (isExtensionError(event.reason)) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              return true;
+            }
+          },
+          true
+        );
+      })();
+    </script>
+    <title>VELORA PK | The Luxury Pakistani Marketplace</title>
+    <meta name="description" content="VELORA PK - The pinnacle of luxury Pakistani marketplace. Bespoke couture, heirloom 24K jewelry, artisan leathercraft and regal oud with authentic 3D gold craftsmanship." />
+    <meta property="og:title" content="VELORA PK | The Luxury Pakistani Marketplace" />
+    <meta property="og:description" content="VELORA PK - The pinnacle of luxury Pakistani marketplace. Bespoke couture, heirloom 24K jewelry, artisan leathercraft and regal oud." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cinzel+Decorative:wght@700;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-[#050505] text-[#F5D76E]/90 antialiased selection:bg-[#D4AF37]/30 selection:text-[#FFD700] min-h-screen overflow-x-hidden">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

@@ -1,0 +1,6 @@
+{
+  "name": "VELORA PK",
+  "description": "Luxury Pakistani marketplace featuring bespoke couture, heirloom jewelry, artisan crafts and horology with a premium 3D gold monogram.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
